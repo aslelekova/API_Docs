@@ -81,12 +81,12 @@ async def test(upload_image: UploadFile):
             page_number = name.split("-")[1]
 
         # Log prediction details.
-        logger.debug(f"Prediction: Type - {type}, Confidence - {confidence}, Page Number - {page_number}")
+        logger.debug(f"Prediction: Type - {type}, Confidence - {confidence:.4f}, Page Number - {page_number}")
 
         # Create dictionary containing all values.
         all_values = {
             "type": type,
-            "confidence": confidence,
+            "confidence": round(confidence, 4),
             "series": series,
             "number": number,
             "page_number": page_number
