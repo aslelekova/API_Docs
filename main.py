@@ -78,20 +78,12 @@ async def detect(upload_image: UploadFile):
         # Log image save success.
         logger.debug(f"Image saved: {hashedFileName}")
 
-        all_values_empty = {
-            "type": "",
-            "confidence": "",
-            "series": "",
-            "number": "",
-            "page_number": ""
-        }
-
         # Make prediction using YOLO model.
         prediction_class = model.predict((Path() / "Content" / "Predict_Images" / hashedFileName).absolute(), conf=0.6)
 
         if prediction_class[0].probs is None:
-            print("pred_class")
-            return JSONResponse(all_values_empty)
+            raise HTTPException(status_code=404, detail='Bad Class')
+
         # Extract prediction details.
         confidence = prediction_class[0].probs.top1conf.item()
         name = prediction_class[0].names[prediction_class[0].probs.top1]
@@ -112,8 +104,7 @@ async def detect(upload_image: UploadFile):
         image = Image.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
         boxes = prediction_detect.boxes
         if boxes is None or len(boxes) == 0:
-            print("boxes ")
-            return JSONResponse(all_values_empty)
+            raise HTTPException(status_code=417, detail='Bad Detect')
 
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
 
@@ -156,14 +147,12 @@ async def detect(upload_image: UploadFile):
             "number": number,
             "page_number": page_number
         }
-
         print(all_values)
         return JSONResponse(all_values)
 
     # Raise exception if there's an IndexError.
     except IndexError:
-        print("index error")
-        return JSONResponse(all_values_empty)
+        raise HTTPException(status_code=401, detail='Bad APIToken')
 
 
 # --------------------------------------------------------------------------
