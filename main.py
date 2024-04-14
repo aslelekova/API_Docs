@@ -103,13 +103,10 @@ async def detect(upload_image: UploadFile):
 
         image = Image.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
         boxes = prediction_detect.boxes
-        if boxes is None:
+        if boxes is None or len(boxes) == 0:
             raise HTTPException(status_code=417, detail='Bad Detect')
 
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
-
-        if max_box is None:
-            raise HTTPException(status_code=417, detail='Bad Detect')
 
         cropped_image = image.crop(max_box.xyxy.tolist()[0])
         # img = np.array(cropped_image)[:, :, ::-1]
