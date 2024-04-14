@@ -46,8 +46,8 @@ app.add_middleware(
 
 
 @logger.catch
-@app.post('/test')
-async def test(upload_image: UploadFile):
+@app.post('/detect')
+async def detect(upload_image: UploadFile):
     """
     :param upload_image: File of photo that contains ipu and QR code on it
     :return: JSON response containing predicted values
@@ -111,7 +111,7 @@ async def test(upload_image: UploadFile):
 
 if __name__ == '__main__':
     uvicorn.run("main:app",
-                host="localhost",
+                host="http://83.166.239.26:5500",
                 port=5500,
                 reload=True
                 )
