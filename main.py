@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 # Load YOLO model.
-model = YOLO('best-cls.pt')
+model = YOLO('3rd_33ep.pt')
 model2 = YOLO('best_detect.onnx')
 
 # Create necessary directories if they don't exist.
