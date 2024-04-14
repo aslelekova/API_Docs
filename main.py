@@ -118,8 +118,8 @@ async def detect(upload_image: UploadFile):
 
         cropped_image = image.crop(max_box.xyxy.tolist()[0])
 
-        if cropped_image.size[0] < cropped_image.size[1]:
-            cropped_image = cropped_image.rotate(270, expand=True)
+        # if cropped_image.size[0] < cropped_image.size[1]:
+        #     cropped_image = cropped_image.rotate(270, expand=True)
         cropped_image = cropped_image.resize((250, 50))
         hashedFileName = HasherObject.CreateImageFileNameHash(upload_image.filename)
         cropped_image_path = os.path.join(tmp_dir, "cropped_" + hashedFileName)
