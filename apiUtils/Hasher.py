@@ -7,4 +7,4 @@ class HasherClass:
         self.ImageHasher = passlib.context.CryptContext(schemes=['sha512_crypt'], deprecated='auto')
 
     def CreateImageFileNameHash(self, FileName: str) -> str:
-        return hex_sha512.hash(FileName) + "." + FileName.split(".")[1]  # type: ignore
+        return hex_sha512.hash(FileName) + "." + FileName.split(".")[-1]  # type: ignore

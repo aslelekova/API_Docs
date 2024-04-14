@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 # Load YOLO model.
-model = YOLO('2nd_best_50ep.pt')
+model = YOLO('best-cls.pt')
 model2 = YOLO('best_detect.onnx')
 
 # Create necessary directories if they don't exist.
@@ -166,7 +166,7 @@ async def detect(upload_image: UploadFile):
 
 if __name__ == '__main__':
     uvicorn.run("main:app",
-                host="83.166.239.26",
+                host="localhost",
                 port=5500,
                 reload=True
                 )
