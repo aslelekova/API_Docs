@@ -104,7 +104,7 @@ async def detect(upload_image: UploadFile):
         image = Image.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
         boxes = prediction_detect.boxes
         if boxes is None or len(boxes) == 0:
-            raise HTTPException(status_code=417, detail='Bad Detect')
+            return []
 
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
 
@@ -152,8 +152,7 @@ async def detect(upload_image: UploadFile):
 
     # Raise exception if there's an IndexError.
     except IndexError:
-        raise HTTPException(status_code=401, detail='Bad APIToken')
-
+        return []
 
 # --------------------------------------------------------------------------
 
