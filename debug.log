@@ -187,3 +187,12 @@
 2024-04-14T15:16:42.677223+0300 Image saved: 87aa27f0d3f5027eafa48ce1fb448ab1eceddfa0ca16a0dc2bf6a473ecc40e1e9e7d395644431147c2b340b9df9f6db60c3382325e8ab102e5e96842af2c88cd.png
 2024-04-14T15:16:42.758027+0300 Prediction: Type - STS, Confidence - 1.0000, Page Number - 1
 2024-04-14T15:16:42.918705+0300 Prediction: Type - STS, Confidence - 1.0000, Page Number - 1
+2024-04-14T15:35:27.243549+0300 Image saved: fd07d5879ef90d96b53bd242cf6dad4240f4a1200833fdc2a48deb432fa7d65868b23bd0d217b01068b06784e8fec8fb607190afb7333b83114b28ca1d1cb0a2.jpg
+2024-04-14T15:35:27.858554+0300 Prediction: Type - Drivers, Confidence - 0.9993, Page Number - 2
+2024-04-14T15:35:28.231942+0300 Prediction: Type - Drivers, Confidence - 0.9993, Page Number - 2
+2024-04-14T15:36:06.525337+0300 Image saved: 1de3ae6a4753ce3f4b4cc9ed099fbe602d19ebac4e38861e07726f85e93497a33a036eb3989a7f11ca299ceffd2073bcec096548563097b35aaff68a77917ca4.jpg
+2024-04-14T15:36:06.594859+0300 Prediction: Type - Drivers, Confidence - 0.9606, Page Number - 2
+2024-04-14T15:36:06.689480+0300 Prediction: Type - Drivers, Confidence - 0.9606, Page Number - 2
+2024-04-14T15:36:59.585646+0300 Image saved: 1de3ae6a4753ce3f4b4cc9ed099fbe602d19ebac4e38861e07726f85e93497a33a036eb3989a7f11ca299ceffd2073bcec096548563097b35aaff68a77917ca4.jpg
+2024-04-14T15:37:00.213684+0300 Prediction: Type - Drivers, Confidence - 0.9606, Page Number - 2
+2024-04-14T15:37:00.577364+0300 Prediction: Type - Drivers, Confidence - 0.9606, Page Number - 2
