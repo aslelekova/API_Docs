@@ -108,6 +108,9 @@ async def detect(upload_image: UploadFile):
 
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
 
+        if max_box is None:
+            raise HTTPException(status_code=417, detail='Bad Detect')
+
         cropped_image = image.crop(max_box.xyxy.tolist()[0])
         # img = np.array(cropped_image)[:, :, ::-1]
         # if img.shape[0] < img.shape[1]:
