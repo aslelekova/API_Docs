@@ -1,20 +1,32 @@
+import shutil
+
 import aiofiles, os, uvicorn
+import cv2
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from starlette.responses import JSONResponse
 from ultralytics import YOLO
+from PIL import Image
 
+import CRNN
 from apiUtils.Hasher import HasherClass
 from pathlib import Path
+import numpy as np
 
 # Load YOLO model.
-model = YOLO('1st_best_of_100ep.pt')
+model = YOLO('3rd_33ep.pt')
+model2 = YOLO('best_detect.onnx')
 
 # Create necessary directories if they don't exist.
 content_dir = os.path.join(os.getcwd(), "api", "Content")
 predict_images_dir = os.path.join(content_dir, "Predict_Images")
+
+tmp_dir = os.path.join(os.getcwd(), "tmp")
+if os.path.exists(tmp_dir):
+    shutil.rmtree(tmp_dir)
+os.makedirs(tmp_dir)
 
 if not os.path.exists(content_dir):
     os.makedirs(content_dir)
@@ -54,6 +66,9 @@ async def detect(upload_image: UploadFile):
     """
 
     try:
+        shutil.rmtree(tmp_dir)
+        os.makedirs(tmp_dir)
+
         # Save uploaded image.
         hashedFileName = HasherObject.CreateImageFileNameHash(upload_image.filename)
         async with aiofiles.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute(),
@@ -66,11 +81,52 @@ async def detect(upload_image: UploadFile):
         # Make prediction using YOLO model.
         prediction_class = model.predict((Path() / "Content" / "Predict_Images" / hashedFileName).absolute(), conf=0.6)
 
+        if prediction_class[0].probs is None:
+            raise HTTPException(status_code=404, detail='Bad Class')
+
         # Extract prediction details.
         confidence = prediction_class[0].probs.top1conf.item()
         name = prediction_class[0].names[prediction_class[0].probs.top1]
-        series = ""
-        number = ""
+
+        if name == "vehicle_passport":
+            type = name
+            page_number = 0
+        else:
+            type = name.split("-")[0]
+            page_number = name.split("-")[1]
+
+        # Log prediction details.
+        logger.debug(f"Prediction: Type - {type}, Confidence - {confidence:.4f}, Page Number - {page_number}")
+
+        prediction_detect = model2.predict((Path() / "Content" / "Predict_Images" / hashedFileName).absolute(),
+                                           conf=0.5)[0]
+
+        image = Image.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
+        boxes = prediction_detect.boxes
+        if boxes is None:
+            raise HTTPException(status_code=417, detail='Bad Detect')
+
+        max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
+
+        cropped_image = image.crop(max_box.xyxy.tolist()[0])
+        # img = np.array(cropped_image)[:, :, ::-1]
+        # if img.shape[0] < img.shape[1]:
+        #     img = img.transpose((2, 0, 1))
+        # else:
+        #     img = img.transpose((2, 1, 0))
+        # img = cv2.resize(img, (250, 50))
+        # print(img.shape)
+        # cropped_image = Image.fromarray(img.transpose(1, 2, 0))
+        cropped_image  = cropped_image.resize((250, 50))
+
+        hashedFileName = HasherObject.CreateImageFileNameHash(upload_image.filename)
+        cropped_image_path = os.path.join(tmp_dir, "cropped_" + hashedFileName)
+
+        cropped_image.save(cropped_image_path)
+
+        detected = CRNN.predict(tmp_dir)
+        series = detected[:4]
+        number = detected[4:]
 
         # Extract additional details based on prediction.
         if name == "vehicle_passport":
@@ -91,15 +147,7 @@ async def detect(upload_image: UploadFile):
             "number": number,
             "page_number": page_number
         }
-
-        # prediction_detect = detect.prediction('v2.pt', 'data.yaml',
-        #                                (Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
-
-        if prediction_class is None:
-            raise HTTPException(status_code=404, detail='Bad Class')
-        # if prediction_detect is None:
-        #     raise HTTPException(status_code=417, detail='Bad Detect')
-
+        print(all_values)
         return JSONResponse(all_values)
 
     # Raise exception if there's an IndexError.
@@ -111,7 +159,7 @@ async def detect(upload_image: UploadFile):
 
 if __name__ == '__main__':
     uvicorn.run("main:app",
-                host="http://83.166.239.26:5500",
+                host="http//83.166.239.26",
                 port=5500,
                 reload=True
                 )
