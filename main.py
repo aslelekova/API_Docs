@@ -117,7 +117,6 @@ async def detect(upload_image: UploadFile):
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
 
         cropped_image = image.crop(max_box.xyxy.tolist()[0])
-        cropped_image.save('/Users/anastasialelekova/Downloads/API_Docs/image/image.jpg')
 
         if cropped_image.size[0] < cropped_image.size[1]:
             cropped_image = cropped_image.rotate(270, expand=True)
