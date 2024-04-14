@@ -104,6 +104,7 @@ async def detect(upload_image: UploadFile):
         image = Image.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
         boxes = prediction_detect.boxes
 
+        print(len(boxes))
         if boxes is None or len(boxes) == 0:
             return {
                 "type": type,
@@ -116,16 +117,9 @@ async def detect(upload_image: UploadFile):
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
 
         cropped_image = image.crop(max_box.xyxy.tolist()[0])
-        # img = np.array(cropped_image)[:, :, ::-1]
-        # if img.shape[0] < img.shape[1]:
-        #     img = img.transpose((2, 0, 1))
-        # else:
-        #     img = img.transpose((2, 1, 0))
-        # img = cv2.resize(img, (250, 50))
-        # print(img.shape)
-        # cropped_image = Image.fromarray(img.transpose(1, 2, 0))
+        if cropped_image.size[0] < cropped_image.size[1]:
+            cropped_image = cropped_image.rotate(-270, expand=True)
         cropped_image = cropped_image.resize((250, 50))
-
         hashedFileName = HasherObject.CreateImageFileNameHash(upload_image.filename)
         cropped_image_path = os.path.join(tmp_dir, "cropped_" + hashedFileName)
 
@@ -134,7 +128,6 @@ async def detect(upload_image: UploadFile):
         detected = CRNN.predict(tmp_dir)
         series = detected[:4]
         number = detected[4:]
-
 
         # Log prediction details.
         logger.debug(f"Prediction: Type - {type}, Confidence - {confidence:.4f}, Page Number - {page_number}")
@@ -159,7 +152,7 @@ async def detect(upload_image: UploadFile):
 
 if __name__ == '__main__':
     uvicorn.run("main:app",
-                host="83.166.239.26",
+                host="localhost",
                 port=5500,
                 reload=True
                 )
