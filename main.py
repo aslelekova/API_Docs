@@ -136,6 +136,7 @@ async def detect(upload_image: UploadFile):
         number = detected[4:]
 
         # Extract additional details based on prediction.
+        print(name)
         if name in ["vehicle_passport", "Unknown"]:
             type = name
             page_number = 0
