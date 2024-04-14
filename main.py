@@ -152,7 +152,7 @@ async def detect(upload_image: UploadFile):
 
 if __name__ == '__main__':
     uvicorn.run("main:app",
-                host="localhost",
+                host="83.166.239.26",
                 port=5500,
                 reload=True
                 )
