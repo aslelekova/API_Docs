@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 
 # Load YOLO model.
-model = YOLO('3rd_33ep.pt')
+model = YOLO('2nd_best_50ep.pt')
 model2 = YOLO('best_detect.onnx')
 
 # Create necessary directories if they don't exist.
@@ -103,8 +103,15 @@ async def detect(upload_image: UploadFile):
 
         image = Image.open((Path() / "Content" / "Predict_Images" / hashedFileName).absolute())
         boxes = prediction_detect.boxes
+
         if boxes is None or len(boxes) == 0:
-            raise HTTPException(status_code=417, detail='Bad Detect')
+            return {
+                "type": type,
+                "confidence": round(confidence, 4),
+                "series": "",
+                "number": "",
+                "page_number": page_number
+            }
 
         max_box = max(boxes, key=lambda x: float(x.conf[0]))[0]
 
@@ -117,7 +124,7 @@ async def detect(upload_image: UploadFile):
         # img = cv2.resize(img, (250, 50))
         # print(img.shape)
         # cropped_image = Image.fromarray(img.transpose(1, 2, 0))
-        cropped_image  = cropped_image.resize((250, 50))
+        cropped_image = cropped_image.resize((250, 50))
 
         hashedFileName = HasherObject.CreateImageFileNameHash(upload_image.filename)
         cropped_image_path = os.path.join(tmp_dir, "cropped_" + hashedFileName)
