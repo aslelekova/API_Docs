@@ -87,7 +87,6 @@ async def detect(upload_image: UploadFile):
         # Extract prediction details.
         confidence = prediction_class[0].probs.top1conf.item()
         name = prediction_class[0].names[prediction_class[0].probs.top1]
-        print(name)
 
         if name == "vehicle_passport":
             type = name
@@ -137,7 +136,7 @@ async def detect(upload_image: UploadFile):
         number = detected[4:]
 
         # Extract additional details based on prediction.
-        if name == "vehicle_passport":
+        if name in ["vehicle_passport", "Unknown"]:
             type = name
             page_number = 0
         else:
